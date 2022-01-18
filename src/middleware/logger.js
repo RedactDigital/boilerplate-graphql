@@ -1,4 +1,5 @@
 const { createLogger, format, transports, addColors } = require('winston');
+const path = require('path');
 
 const customLevels = {
   levels: {
@@ -50,12 +51,12 @@ const devLogger = createLogger({
 const prodLogger = createLogger({
   transports: [
     new transports.File({
-      filename: `logs/info.log`,
+      filename: path.join(__dirname, '../../storage/logs/info.log'),
       level: 'info',
       format: logFormatter,
     }),
     new transports.File({
-      filename: `logs/error.log`,
+      filename: path.join(__dirname, '../../storage/logs/error.log'),
       level: 'warn',
       format: logFormatter,
     }),
