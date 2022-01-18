@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm i && nodemon bin/www"
+    "start": "npm i && nodemon bin/www",
+    "make:keys": "mkdir ./config/keys && node ./scripts/generateKeyPair.js",
+    "env": "mv .env.example .env"
   },
   "keywords": [],
   "author": "patrick@redact.digital",

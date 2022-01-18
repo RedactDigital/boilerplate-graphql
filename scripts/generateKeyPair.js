@@ -5,6 +5,7 @@
  */
 const crypto = require('crypto');
 const fs = require('fs');
+const path = require('path');
 
 const genKeyPair = () => {
   // Generates an object where the keys are stored in properties `privateKey` and `publicKey`
@@ -20,11 +21,11 @@ const genKeyPair = () => {
     },
   });
 
-  // Create the public key file
-  fs.writeFileSync(`${__dirname}/jwt_pub.pem`, keyPair.publicKey);
+  // Create the public key file in config/keys
+  fs.writeFileSync(path.join(__dirname, '../config/keys/jwt_pub.pem'), keyPair.publicKey);
 
-  // Create the private key file
-  fs.writeFileSync(`${__dirname}/jwt_priv.pem`, keyPair.privateKey);
+  // Create the private key file in config/keys
+  fs.writeFileSync(path.join(__dirname, '../config/keys/jwt_priv.pem'), keyPair.privateKey);
 };
 
 // Generate the keypair
