@@ -5,31 +5,18 @@
 ### Method 1:
 
 1. Clone the repository
-2. Install dependencies
+2. Install dependencies `npm install`
+3. Create environment file `npm run env`
+4. Create secure keys `npm run create-keys`
+5. Run server `npm start`
 
-```bash
-npm install
-```
-
-3. Create secure keys
-
-```bash
-redact make-keys
-```
-
-4. Run the server
-
-### Method 2:
+### Method 2: (Not fully implemented yet)
 
 1. Clone the repository
-2. Run docker-compose
+2. Run docker-compose `docker-compose up`
 
-```bash
-docker-compose up
-```
-
-Note: If you are using docker-compose, you can run the server with `docker-compose up -d` to start the server in the background and `docker-compose down` to stop the server.
-Important: If you are using docker-compose, you need to run docker-compose in the root directory of the project.
+_Note: If you are using docker-compose, you can run the server with `docker-compose up -d` to start the server in the background and `docker-compose down` to stop the server._
+**Important: If you are using docker-compose, you need to run docker-compose in the root directory of the project.**
 
 <!-- TODO Create command to set server up with one command -->
 
