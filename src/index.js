@@ -1,4 +1,6 @@
 require('dotenv').config({ silent: true });
+require('./globals');
+
 const express = require('express');
 const app = express();
 const toobusy = require('toobusy-js');
@@ -26,10 +28,13 @@ app
     express.static(path.join(__dirname, '../public')) // Express static middleware serves files from a given root directory
   );
 
+const { requestLimiter } = require(`${global.rootFolder}/src/middleware`);
 const schema = require('./schemas');
 
 app.use(
   '/',
+  requestLimiter,
+
   graphqlHTTP({
     schema,
     graphiql: true,

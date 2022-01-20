@@ -1,9 +1,9 @@
 const graphql = require('graphql');
 const { GraphQLInt, GraphQLList } = graphql;
 
-const { UserType } = require('../../typeDefs');
+const { UserType } = require(`${global.rootFolder}/src/schemas/typeDefs`);
 
-const userData = require('../../../../public/dummy-data.json');
+const userData = require(`${global.rootFolder}/public/dummy-data.json`);
 
 module.exports = {
   type: new GraphQLList(UserType),

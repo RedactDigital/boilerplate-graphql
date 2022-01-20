@@ -1,9 +1,9 @@
-const requestLimiter = require('../middleware/requestLimiter');
-const requestThrottler = require('../middleware/requestThrottler');
-const log = require('../middleware/logger');
+const requestLimiter = require(`${global.rootFolder}/src/middleware/requestLimiter`);
+const log = require(`${global.rootFolder}/src/middleware/logger`);
+const client = require(`${global.rootFolder}/src/middleware/redis`);
 
 module.exports = {
   requestLimiter,
-  requestThrottler,
   log,
+  client,
 };
