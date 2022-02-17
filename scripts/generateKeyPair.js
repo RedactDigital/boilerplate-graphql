@@ -22,10 +22,10 @@ const genKeyPair = () => {
   });
 
   // Create the public key file in config/keys
-  fs.writeFileSync(path.join(__dirname, '../config/keys/jwt_pub.pem'), keyPair.publicKey);
+  fs.writeFileSync(path.join(__dirname, '../config/keys/public.pem'), keyPair.publicKey);
 
   // Create the private key file in config/keys
-  fs.writeFileSync(path.join(__dirname, '../config/keys/jwt_priv.pem'), keyPair.privateKey);
+  fs.writeFileSync(path.join(__dirname, '../config/keys/private.pem'), keyPair.privateKey);
 };
 
 // Generate the keypair

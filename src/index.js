@@ -5,10 +5,11 @@ const express = require('express');
 const app = express();
 const toobusy = require('toobusy-js');
 const helmet = require('helmet');
-const path = require('path');
 const cors = require('cors');
 const passport = require('passport');
-const { graphqlHTTP } = require('express-graphql');
+require(`${root}/src/middleware/passport`)(passport);
+const { requestLimiter } = require(`${root}/src/middleware`);
+const { preAuth, graphql } = require(`${root}/src/routes`);
 
 app
   // If the request is taking too long, send a 503 response
@@ -23,22 +24,15 @@ app
     helmet({ contentSecurityPolicy: process.env.ENV === 'production' ? undefined : false }), // Helmet helps you secure your Express apps by setting various HTTP headers
     cors(), // CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options
     passport.initialize(), // Passport is a Node.js middleware for authenticating users
-    express.json(), // Express json middleware parses the JSON object in the request body and makes it available on req.body
-    express.urlencoded({ extended: false }), // Express url encoded middleware parses the URL-encoded data and makes it available on req.body
-    express.static(path.join(__dirname, '../public')) // Express static middleware serves files from a given root directory
-  );
+    express.json() // Express json middleware parses the JSON object in the request body and makes it available on req.body
+  )
 
-const { requestLimiter } = require(`${global.rootFolder}/src/middleware`);
-const schema = require('./schemas');
+  // Routes
+  .use(preAuth, requestLimiter, passport.authenticate('jwt', { session: false, msg: 'Invalid token' }), graphql)
 
-app.use(
-  '/',
-  requestLimiter,
-
-  graphqlHTTP({
-    schema,
-    graphiql: true,
-  })
-);
+  // 404
+  .use((req, res) => {
+    res.status(404).json({ success: false, msg: 'Not found' });
+  });
 
 module.exports = app;

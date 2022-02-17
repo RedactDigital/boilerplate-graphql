@@ -1,7 +1,7 @@
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLSchema } = graphql;
-const queries = require('./queries');
-const mutations = require('./mutations');
+const queries = require(`${root}/src/schemas/resolvers/queries`);
+const mutations = require(`${root}/src/schemas/resolvers/mutations`);
 
 const RootQuery = new GraphQLObjectType({
   name: 'RootQueryType',

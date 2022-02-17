@@ -8,7 +8,6 @@ var app = require('../src/index');
 var appName = process.env.APP_NAME;
 var debug = require('debug')(appName);
 var http = require('http');
-var { log } = require('../src/middleware');
 
 /**
  * Get port from environment and store in Express.

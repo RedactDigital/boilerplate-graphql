@@ -1,6 +1,12 @@
 const path = require('path');
+const dayjs = require('dayjs');
 
-global.rootFolder = path.resolve(__dirname, '../');
+root = path.resolve(__dirname, '../');
+
+const { log: logger } = require(`${root}/src/middleware`);
+
+day = dayjs;
+log = logger;
 
 module.exports = {
   global,
