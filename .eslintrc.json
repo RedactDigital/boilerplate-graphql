@@ -1,7 +1,6 @@
 {
   "env": { "node": true, "es6": false },
   "parserOptions": {
-    // Required for certain syntax usages
     "ecmaVersion": 2020
   },
   "extends": ["eslint:recommended", "prettier"],
@@ -11,7 +10,9 @@
     "no-unused-vars": "error",
     "no-console": "error",
     "no-unused-expressions": [2, { "allowTernary": true }],
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "no-trailing-spaces": ["error", { "skipBlankLines": false }],
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxBOF": 0, "maxEOF": 0 }]
   },
   "globals": {
     "root": true,
