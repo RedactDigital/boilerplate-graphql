@@ -3,29 +3,75 @@
  *
  * Make sure to save the private key elsewhere after generated!
  */
+require('dotenv').config({ silent: true });
+require(`../src/globals`);
+
 const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
+const { exit } = require('process');
+const { OAuthClient } = require('../src/database/models');
+const { encrypt } = require('../src/middleware/encryption');
 
-const genKeyPair = () => {
-  // Generates an object where the keys are stored in properties `privateKey` and `publicKey`
-  const keyPair = crypto.generateKeyPairSync('rsa', {
-    modulusLength: 4096, // bits - standard for RSA keys
-    publicKeyEncoding: {
-      type: 'pkcs1', // "Public Key Cryptography Standards 1"
-      format: 'pem', // Most common formatting choice
-    },
-    privateKeyEncoding: {
-      type: 'pkcs1', // "Public Key Cryptography Standards 1"
-      format: 'pem', // Most common formatting choice
-    },
-  });
+const genKeyPair = async () => {
+  try {
+    // Generates an object where the keys are stored in properties `privateKey` and `publicKey`
+    const keyPair = await crypto.generateKeyPairSync('ed25519', {
+      modulusLength: 256, // bits - standard for ed25519 keys
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem',
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem',
+      },
+    });
 
-  // Create the public key file in config/keys
-  fs.writeFileSync(path.join(__dirname, '../config/keys/public.pem'), keyPair.publicKey);
+    // Get all password keys from database
+    const oldKeys = await OAuthClient.findAll({
+      where: {
+        type: 'password',
+      },
+    });
 
-  // Create the private key file in config/keys
-  fs.writeFileSync(path.join(__dirname, '../config/keys/private.pem'), keyPair.privateKey);
+    // Revoke all old keys
+    if (oldKeys && process.env.NODE_ENV === 'production') {
+      log.warn('Revoking all old keys');
+      await oldKeys.forEach(key => {
+        key.revoked = true;
+        key.save();
+      });
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      log.warn('Only one key pair is generated in development mode');
+      exit();
+    }
+
+    // TODO - revoke all user access tokens for each user
+
+    log.warn('Generating new key pair');
+    // Save the private key to the database
+    await OAuthClient.create({
+      name: 'password grant client',
+      secret: encrypt(keyPair.privateKey),
+      type: 'password',
+      public: false,
+      revoked: false,
+    });
+
+    // Save the public key to the database
+    await OAuthClient.create({
+      name: 'password grant client',
+      secret: encrypt(keyPair.publicKey),
+      type: 'password',
+      public: true,
+      revoked: false,
+    });
+
+    exit();
+  } catch (err) {
+    log.error('Error generating key pair: ', err);
+  }
 };
 
 // Generate the keypair

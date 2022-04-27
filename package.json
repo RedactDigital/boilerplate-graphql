@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm i && nodemon bin/www",
-    "make:keys": "mkdir ./config/keys && node ./scripts/generateKeyPair.js",
+    "start": "npm i && node ./scripts/generateKeyPair.js && nodemon bin/www",
+    "make:keys": "node ./scripts/generateKeyPair.js",
     "env": "mv .env.example .env",
     "db": "bash scripts/sequelize.sh",
     "migrate": "npx sequelize db:migrate",
@@ -16,6 +16,7 @@
   "author": "patrick@redact.digital",
   "license": "ISC",
   "dependencies": {
+    "aes-encryption": "^1.0.4",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dayjs": "^1.10.7",

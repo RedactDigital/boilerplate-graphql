@@ -1,9 +1,15 @@
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
 const geoip = require('geoip-lite');
+const { decrypt } = require(`${root}/src/middleware/encryption`);
+const { OAuthClient } = require(`${root}/src/database/models`);
 
-const pathToKey = `${root}/config/keys/private.pem`;
-const PRIV_KEY = fs.readFileSync(pathToKey, 'utf8');
+const privateKey = OAuthClient.findOne({
+  where: {
+    public: false,
+    revoked: false,
+    type: 'password',
+  },
+});
 
 module.exports = function issueJWT(user, ipAddress) {
   const { id } = user;
@@ -23,7 +29,7 @@ module.exports = function issueJWT(user, ipAddress) {
     geoLocation,
   };
 
-  const signedToken = jwt.sign(payload, PRIV_KEY, options);
+  const signedToken = jwt.sign(payload, decrypt(privateKey), options);
 
   return {
     token: signedToken,

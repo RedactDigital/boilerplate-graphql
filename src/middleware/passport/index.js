@@ -1,15 +1,23 @@
 const { Strategy, ExtractJwt } = require('passport-jwt');
-const fs = require('fs');
-const { Users } = require(`${root}/src/database/models`);
+// const fs = require('fs');
+const { User, OAuthClient } = require(`${root}/src/database/models`);
 
-const pathToKey = `${root}/config/keys/public.pem`;
-const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
+// const pathToKey = `${root}/config/keys/public.pem`;
+// const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
+
+const publicKey = OAuthClient.findOne({
+  where: {
+    public: true,
+    revoked: false,
+    type: 'password',
+  },
+});
 
 // At a minimum, you must pass the `jwtFromRequest` and `secretOrKey` properties
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: PUB_KEY,
-  algorithms: ['RS256'],
+  secretOrKey: publicKey,
+  algorithms: [process.env.JWT_ALGORITHM],
   issuer: process.env.API_URL,
   audience: process.env.APP_URL,
 };
@@ -20,7 +28,7 @@ module.exports = passport => {
   passport.use(
     new Strategy(jwtOptions, async (tokenPayload, done) => {
       try {
-        const user = await Users.findByPk(tokenPayload.sub);
+        const user = await User.findByPk(tokenPayload.sub);
 
         user.ip = tokenPayload.ip;
         user.geoLocation = tokenPayload.geoLocation;
